@@ -12,13 +12,14 @@ public:
 			parent[i] = getRep(parent[i]);
 		return parent[i];
 	}
-	void join(int u, int v) {
+	bool join(int u, int v) {
 		int RepU = getRep(u);
 		int RepV = getRep(v);
-		if (RepU == RepV) return;
+		if (RepU == RepV) return false;
 		if (rand() % 2)
 			parent[RepU] = RepV;
 		else parent[RepV] = RepU;
+        return true;
 	}
 };
 class Solution {
@@ -34,22 +35,17 @@ public:
             for (int j = i + 1; j < n; ++j) {
                 int dist = abs(pts[i][0] - pts[j][0]) + abs(pts[i][1] - pts[j][1]);
                 input.push_back({i, j, dist});
-                input.push_back({j, i, dist});
             }
+
         sort(input.begin(), input.end(), [](const ftw& left, const ftw& right) {
 		    return left.weight < right.weight;
 		});
-        int totalWeight = 0;
-        for (ftw& edge : input) {
-            int from = edge.from;
-            int to = edge.to;
-            int weight = edge.weight;
 
-            if (ds.getRep(from) != ds.getRep(to)) {
-                ds.join(from, to);
-                totalWeight += weight;
-            }
-        }
+        int totalWeight = 0;
+        for (ftw& edge : input)
+            if (ds.join(edge.from, edge.to))
+                totalWeight += edge.weight;
+
         return totalWeight;
     }
 };
