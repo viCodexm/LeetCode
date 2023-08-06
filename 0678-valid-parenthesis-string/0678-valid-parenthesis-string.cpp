@@ -1,30 +1,21 @@
 class Solution {
 public:
     bool checkValidString(string s) {
-        stack<int> leftBrackets, stars;
-        for (int i = 0; i < s.size(); ++i) {
-            switch (s[i]) {
-            case '(':
-                leftBrackets.push(i);
-                break;
-            case ')':
-                if (!leftBrackets.empty())
-                    leftBrackets.pop();
-                else if (!stars.empty())
-                    stars.pop();
-                else return false;
-                break;
-            case '*':
-                stars.push(i);
-                break;
-            }
-        }
-        while (!leftBrackets.empty() && !stars.empty()) {
-            if (leftBrackets.top() > stars.top())
+        int balanced = 0;
+        for (char& c : s) {
+            balanced += (c == '(' || c == '*') - (c == ')');
+            if (balanced < 0)
                 return false;
-            leftBrackets.pop();
-            stars.pop();
         }
-        return leftBrackets.empty();
+        if (balanced == 0)
+            return true;
+        balanced = 0;
+        reverse(s.begin(), s.end());
+        for (char& c : s) {
+            balanced += (c == ')' || c == '*') - (c == '(');
+            if (balanced < 0)
+                return false;
+        }
+        return true;
     }
 };
