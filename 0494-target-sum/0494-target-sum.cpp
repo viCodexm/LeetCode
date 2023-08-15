@@ -1,16 +1,17 @@
 class Solution {
 public:
-    int count = 0;
     int findTargetSumWays(vector<int>& nums, int target) {
-        dfs(0, nums, target);
-        return count;
+        map<pair<int, int>, int> dp;
+        return dfs(0, nums, target, dp);
     }
-    void dfs(int i, vector<int>& nums, int target) {
-        if (i >= nums.size()) {
-            count += !target;
-            return;
-        }
-        dfs(i + 1, nums, target + nums[i]);
-        dfs(i + 1, nums, target - nums[i]);
+    int dfs(int i, vector<int>& nums, int target, map<pair<int, int>, int>& dp) {
+        if (i >= nums.size())
+            return !target;
+        int sum = abs(target);
+        auto it = dp.find({i, sum});
+        if (it != dp.end())
+            return it->second;
+        
+        return dp[{i, sum}] = dfs(i + 1, nums, target + nums[i], dp) + dfs(i + 1, nums, target - nums[i], dp);
     }
 };
