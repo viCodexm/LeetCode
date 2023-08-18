@@ -1,23 +1,41 @@
+struct Pair {
+    int index;
+    int value;
+};
+bool PairComparator(const Pair & a, const Pair & b) {
+    return a.value > b.value;
+}
 class Solution {
 public:
     int maximalNetworkRank(int n, vector<vector<int>>& roads) {
-        vector<vector<int>> v(n, vector<int>(0,0));
+        vector<int> counts(n);
+        vector<vector<int>> adj(n, vector<int>(n, 0));
         for (vector<int>& road : roads) {
-            v[road[0]].push_back(road[1]);
-            v[road[1]].push_back(road[0]);
+            if (road.empty())
+                continue;
+            int a = road[0]; int b = road[1];
+            counts[a]++;
+            counts[b]++;
+            adj[a][b] = adj[b][a] = true;
         }
+        vector<Pair> maxes = findThreeMaxElements(counts);
         int ans = 0;
-        for (int i = 0; i < n; ++i) {
-            for (int j = i + 1; j < n; ++j) {
-                ans = max(ans, calc_rank(i, j, v));
+        int m = maxes.size();
+        for (int i = 0; i < m; ++i) {
+            for (int j = i + 1; j < m; ++j) {
+                bool connected = adj[maxes[i].index][maxes[j].index];
+                ans = max(ans, maxes[i].value + maxes[j].value - connected);
             }
         }
         return ans;
     }
+    vector<Pair> findThreeMaxElements(vector<int>& nums) {
+        vector<Pair> pairs;
+        for (int i = 0; i < nums.size(); i++)
+            pairs.push_back({ i, nums[i] });
 
-    int calc_rank(int i, int j, vector<vector<int>>& v) {
-        bool connected = find(v[i].begin(), v[i].end(), j) != v[i].end();
-        
-        return v[i].size() + v[j].size() - connected;
+        int maxsize = min(6, (int)nums.size());
+        partial_sort(pairs.begin(), pairs.begin() + maxsize, pairs.end(), PairComparator);
+        return vector<Pair>(pairs.begin(), pairs.begin() + maxsize);
     }
 };
