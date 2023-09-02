@@ -24,35 +24,24 @@ struct Trie {
 };
 class Solution {
 public:
-    int ans = INT_MAX;
     int minExtraChar(string s, vector<string>& dictionary) {
         Trie trie;
         for (string& word : dictionary)
             trie.insert(word);
-        vector<vector<vector<int>>> dp(s.size(), vector<vector<int>>(s.size(), vector<int>(26, -1)));
-        dfs(s, 0, trie.root, trie.root, 0, 0, dp);
-        return ans;
-    }
-    bool dfs(string& s, int idx, TrieNode* root, TrieNode* node, int skipped, int depth, vector<vector<vector<int>>>& dp) {
-        if (idx >= s.size()) {
-            if (node->isEnd)
-                ans = min(ans, skipped);
-            else ans = min(ans, skipped + depth);
-            return false;
-        }
-        if (skipped >= ans)
-            return false;
-        
 
-        char c = s[idx];
-        if (dp[idx][skipped][c - 'a'] == 1005)
-            return false;
-        // has next
-        if (node->children[c - 'a'])
-            dfs(s, idx + 1, root, node->children[c - 'a'], skipped, depth + 1, dp);
-        if (node->isEnd)
-            dfs(s, idx, root, root, skipped, 0, dp);
-        else dfs(s, idx - depth + 1, root, root, skipped + 1, 0, dp);
-        return dp[idx][skipped][c - 'a']++;
+        int n = s.size();
+        vector<int> dp(n + 1, 0);
+        for (int i = n - 1; i >= 0; --i) {
+            dp[i] = dp[i + 1] + 1;
+            TrieNode* node = trie.root;
+            for (int j = i; j < n; ++j) {
+                if (!node->children[s[j] - 'a'])
+                    break;
+                node = node->children[s[j] - 'a'];
+                if (node->isEnd)
+                    dp[i] = min(dp[i], dp[j + 1]);
+            }
+        }
+        return dp[0];
     }
 };
