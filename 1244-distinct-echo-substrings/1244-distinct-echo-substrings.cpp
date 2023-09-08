@@ -1,15 +1,17 @@
+#define ll long long
 class Solution {
 public:
-    int distinctEchoSubstrings(string text) {
-        int size = text.size();
+    int distinctEchoSubstrings(string s) {
+        int size = s.size();
         set<string> ans;
-        for (int start = 0; start < size; ++start) {
-            string sub; sub += text[start];
-            int max = (size - start) / 2;
-            for (int len = 1; len <= max; ++len) {
-                if (sub == text.substr(start + sub.size(), sub.size()))
-                    ans.insert(sub);
-                sub += text[start + len];
+        for (int windowSize = 1; windowSize <= size / 2; ++windowSize) {
+            
+            for (int l = 0, r = windowSize, count = 0; l < size - windowSize; ++l, ++r) {
+                (s[l] == s[r]) ? count++ : count = 0;
+                if (count == windowSize) {
+                    ans.insert(s.substr(l, r - l));
+                    count--;
+                }
             }
         }
         return ans.size();
