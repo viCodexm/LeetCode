@@ -2,22 +2,12 @@ class Solution {
 public:
     int ans = 0;
     int combinationSum4(vector<int>& nums, int target) {
-        vector<int> dp(target + 1, -1);
-        return dfs(nums, target, dp);
-    }
-    int dfs(vector<int>& nums, int target, vector<int>& dp) {
-        if (target < 0)
-            return false;
-        if (target == 0)
-            return true;
-        
-        if (dp[target] != -1)
-            return dp[target];
-        
-        dp[target] = 0;
-        for (int& x : nums)
-            dp[target] += dfs(nums, target - x, dp);
-        
+        vector<unsigned int> dp(target + 1, 0);
+        dp[0] = 1;
+        for (int i = 1; i <= target; ++i)
+            for (int& num : nums)
+                if (i - num >= 0)
+                    dp[i] += dp[i - num];
         return dp[target];
     }
 };
