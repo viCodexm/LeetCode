@@ -15,7 +15,8 @@ public:
 	bool join(int u, int v) {
 		int RepU = getRep(u);
 		int RepV = getRep(v);
-		if (RepU == RepV) return false;
+		if (RepU == RepV)
+            return false;
 		if (rand() % 2)
 			parent[RepU] = RepV;
 		else parent[RepV] = RepU;
