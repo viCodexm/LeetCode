@@ -1,5 +1,5 @@
 class MyHashMap {
-    const static int SIZE = 10000000;
+    const static int SIZE = 1000001;
     int table[SIZE];
 public:    
     MyHashMap() {
