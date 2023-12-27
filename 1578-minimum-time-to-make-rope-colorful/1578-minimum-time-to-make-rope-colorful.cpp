@@ -3,19 +3,19 @@ public:
     int minCost(string colors, vector<int>& neededTime) {
         const int size = neededTime.size();
         colors += '\0';
-        int l = 0, r = 0, time = 0;
-        while (l < size) {
-            int max = 0, sum = 0;
-            const char colorLeft = colors[l];
-            while (colorLeft == colors[r]) {
-                const int timeRight = neededTime[r];
+        char prevColor = colors[0];
+        int time = 0, max = 0;
+        for (int i = 0; i < size; ++i) {
+            if (prevColor == colors[i]) {
+                const int timeRight = neededTime[i];
                 max = std::max(max, timeRight);
-                sum += timeRight;
-                r++;
+                time += timeRight;
             }
-            time += sum - max;
-            l = r;
+            else {
+                time -= max;
+                max = 0;
+            }
         }
-        return time;
+        return time - max;
     }
 };
