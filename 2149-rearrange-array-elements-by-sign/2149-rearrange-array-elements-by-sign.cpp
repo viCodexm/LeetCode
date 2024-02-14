@@ -7,16 +7,16 @@ public:
             else positive.push(num);
         }
         bool isPos = true;
-        const int size = nums.size();
-        vector<int> ans(size);
-        for (int i = 0; i < size; ++i) {
-            if (i & 1) {
-                ans[i] = negative.front();
-                negative.pop();
-            } else {
-                ans[i] = positive.front();
+        vector<int> ans;
+        while (!positive.empty() || !negative.empty()) {
+            if (isPos) {
+                ans.push_back(positive.front());
                 positive.pop();
+            } else {
+                ans.push_back(negative.front());
+                negative.pop();
             }
+            isPos = !isPos;
         }
         return ans;
     }
