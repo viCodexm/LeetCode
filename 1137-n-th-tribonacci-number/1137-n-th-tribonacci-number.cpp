@@ -5,11 +5,12 @@ public:
             return 0;
         if (n < 3)
             return 1;
-        int prev3 = 0, prev2 = 1, prev1 = 1, ans = 0;
+        int prev[4];
+        prev[0] = 0; prev[1] = prev[2] = 1;
         for (int i = 3; i <= n; ++i) {
-            ans = prev1 + prev2 + prev3;
-            prev3 = prev2; prev2 = prev1; prev1 = ans;
+            prev[3] = prev[2] + prev[1] + prev[0];
+            prev[0] = prev[1]; prev[1] = prev[2]; prev[2] = prev[3];
         }
-        return ans;
+        return prev[3];
     }
 };
