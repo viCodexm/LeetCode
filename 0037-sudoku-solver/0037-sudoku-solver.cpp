@@ -1,54 +1,48 @@
 class Solution {
 public:
+    bool canPlace(vector<vector<char>>& board, int x, int y, char num) {
+        const int n = board.size();
+        const int box_x = (x / 3) * 3;
+        const int box_y = (y / 3) * 3;
+        for (int i = 0; i < n; ++i) {
+            if (board[x][i] == num || board[i][y] == num || board[box_x + i / 3][box_y + i % 3] == num) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	bool isSafe(vector<vector<char>>& board, int& row, int& col, char& num) {
-		int n = board.size();
-		for (int i = 0; i < n; ++i) {
-			if (board[row][i] == num)
-				return false;
-			if (board[i][col] == num)
-				return false;
+    bool solve(vector<vector<char>>& board, vector<pair<int, int>>& emptyCells, int start) {
+        const int n = board.size();
+        const int m = emptyCells.size();
+        for (int i = start; i < m; ++i) {
+            const auto& [x, y] = emptyCells[i];
+            for (char num = '1'; num <= '9'; ++num) {
+                if (!canPlace(board, x, y, num)) {
+                    continue;
+                }
+                board[x][y] = num;
+                if (solve(board, emptyCells, start + 1)) {
+                    return true;
+                }
+                board[x][y] = '.';
+            }
+            return false;
+        }
 
-			int sr = row / 3;
-			int sc = col / 3;
-			if (board[3 * sr + (i / 3)][3 * sc + (i % 3)] == num)
-				return false;
-		}
-		return true;
-	}
+        return true;
+    }
 
-	bool solve(vector<vector<char>>& board, vector<pair<int, int>>& emptyCells, int& startptr) {
-		int n = board.size();
-		pair<int, int> x;
-		for (int i = startptr; startptr < emptyCells.size(); ++i) {
-			x = emptyCells[i];
-			for (char num = '1'; num <= '9'; ++num)
-				if (isSafe(board, x.first, x.second, num)) {
-					board[x.first][x.second] = num;
-					startptr++;
-					bool isNextGood = solve(board, emptyCells, startptr);
-					if (isNextGood)
-						return true;
-					else {
-						board[x.first][x.second] = '.';
-						startptr--;
-					}
-				}
-			// if we did not filled with any digit
-			return false;
-		}
-		// sudoku completed
-		return true;
-	}
-
-	void solveSudoku(vector<vector<char>>& board) {
-		int startptr = 0;
-		vector<pair<int, int>> emptyCells;
-		for (int i = 0; i < 9; ++i)
-			for (int j = 0; j < 9; ++j)
-				if (board[i][j] == '.')
-					emptyCells.push_back({ i, j });
-		solve(board, emptyCells, startptr);
-	}
-
+    void solveSudoku(vector<vector<char>>& board) {
+        const int n = board.size();
+        vector<pair<int, int>> emptyCells;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (board[i][j] == '.') {
+                    emptyCells.push_back({i, j});
+                }
+            }
+        }
+        solve(board, emptyCells, 0);
+    }
 };
