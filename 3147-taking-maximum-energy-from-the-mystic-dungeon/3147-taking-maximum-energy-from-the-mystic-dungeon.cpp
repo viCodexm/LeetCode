@@ -4,7 +4,7 @@ public:
         const int n = energy.size();
         vector<int> dp(n, 0);
         for (int i = 0; i < n - k; ++i) {
-            dp[i] += energy[i];
+            dp[i] = max(dp[i] + energy[i], energy[i]);
             dp[i + k] += dp[i];
         }
         for (int i = n - k; i < n; ++i) {
